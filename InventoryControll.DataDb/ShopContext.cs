@@ -33,7 +33,7 @@ public partial class ShopContext : DbContext
     {
         var name = _tenantService.Tenant;
         string conStr = _configuration.GetConnectionString(name);
-        optionsBuilder.UseMySql(conStr, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.29-mysql"));
+        optionsBuilder.UseMySql(conStr, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.31-mysql"));
     }
         //=> optionsBuilder.UseMySql("server=localhost;database=shop;uid=root;pwd=kt38hmapq", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.29-mysql"));
 

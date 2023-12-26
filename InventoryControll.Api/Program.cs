@@ -20,6 +20,7 @@ namespace InventoryControll.Api
             builder.Services.AddScoped<ITenantService, TenantService>();
             builder.Services.AddDbContext<ShopContext>(cfg=>cfg.UseMySql("server=localhost;database=shop;uid=root;pwd=kt38hmapq", Microsoft.EntityFrameworkCore.ServerVersion.Parse("5.7.30-mysql")),
                 ServiceLifetime.Scoped);
+            builder.Services.AddScoped<ShopUnitOfWork>();
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
             builder.AddDefinitions(typeof(Program));

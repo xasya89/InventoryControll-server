@@ -9,7 +9,7 @@ public class GoodsDefinition:AppDefinition
 {
     public override void ConfigureApplication(WebApplication app)
     {
-        app.MapGet("/api/goods", async ([FromQuery] int? skip, [FromQuery] int? take, [FromServices] IMediator mediator) =>
+        app.MapGet("/api-inventory/goods", async ([FromQuery] int? skip, [FromQuery] int? take, [FromServices] IMediator mediator) =>
          await mediator.Send(new GetGoods.GetGoodsQuery { Take = take, Skip = skip }))
             .AddEndpointFilter<ChangeTenantFilter>();
     }
