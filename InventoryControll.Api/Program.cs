@@ -1,5 +1,6 @@
 
 using Calabonga.AspNetCore.AppDefinitions;
+using InventoryControll.Api.BackgroundServices;
 using InventoryControll.Api.filters;
 using InventoryControll.DataDb;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,7 @@ namespace InventoryControll.Api
             builder.Services.AddDbContext<ShopContext>(cfg=>cfg.UseMySql("server=localhost;database=shop;uid=root;pwd=kt38hmapq", Microsoft.EntityFrameworkCore.ServerVersion.Parse("5.7.30-mysql")),
                 ServiceLifetime.Scoped);
             builder.Services.AddScoped<ShopUnitOfWork>();
+            builder.Services.AddHostedService<CalculateInventoryBackgroundService>();
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
             builder.AddDefinitions(typeof(Program));
