@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InventoryControll.BizLogic\InventoryControll.BizLogic.csproj" />
     <ProjectReference Include="..\InventoryControll.DataDb\InventoryControll.DataDb.csproj" />
     <ProjectReference Include="..\InventoryControll.Domain\InventoryControll.Domain.csproj" />
   </ItemGroup>

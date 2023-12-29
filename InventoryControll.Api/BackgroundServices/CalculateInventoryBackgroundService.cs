@@ -1,5 +1,6 @@
 ﻿
 
+using InventoryControll.BizLogic.Services;
 using InventoryControll.DataDb;
 using InventoryControll.Domain;
 using System.Threading;
@@ -34,10 +35,13 @@ public class CalculateInventoryBackgroundService : IHostedService
             var tenant = scope.ServiceProvider.GetRequiredService<ITenantService>();
             tenant.SetTenant(shopDbName);
             var unitOfWork = scope.ServiceProvider.GetRequiredService<ShopUnitOfWork>();
+            var calculateBalance = scope.ServiceProvider.GetRequiredService<ICalculateBalance>();
             var transaction = unitOfWork.Connection.BeginTransaction();
             try
             {
+
                 var stocktaking = await unitOfWork.Stocktakings.GetByGroup(stocktakingId);
+                var balance = await calculateBalance.Calculate(stocktaking.Create);
                 stocktaking.Create = DateOnly.FromDateTime(stocktaking.Start).ToDateTime(TimeOnly.MinValue);
                 await unitOfWork.Stocktakings.Update(stocktaking);
                 var positions = stocktaking.Groups.SelectMany(x => x.Goods).GroupBy(x=>x.GoodId)
@@ -46,7 +50,7 @@ public class CalculateInventoryBackgroundService : IHostedService
                         StocktakingId = stocktakingId,
                         GoodId=x.Key,
                         CountFact = x.Sum(s=>s.CountFact),
-                        CountDb=0,
+                        CountDb=balance.Where(b=>b.Id==x.Key).FirstOrDefault()?.Count ?? 0,
                         Price = x.First().Price
                     });
                 foreach(var pos in positions) 
