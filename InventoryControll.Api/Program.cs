@@ -7,6 +7,7 @@ using InventoryControll.DataDb;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 
 namespace InventoryControll.Api
 {
@@ -14,8 +15,11 @@ namespace InventoryControll.Api
     {
         public static void Main(string[] args)
         {
+            bool isService = !(Debugger.IsAttached || args.Contains("--console"));
             var builder = WebApplication.CreateBuilder(args);
 
+            if (isService && OperatingSystem.IsWindows())
+                builder.Host.UseWindowsService();
             builder.Services.AddAuthorization();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

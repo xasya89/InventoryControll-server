@@ -55,4 +55,6 @@ public class GoodsRepository
     }
 
     public async Task<int> Count() => await _connection.QuerySingleAsync<int>("SELECT COUNT(*) FROM goods");
+
+    public async Task<int> CountWithoutDeleted() => await _connection.QuerySingleAsync<int>("SELECT COUNT(*) FROM goods WHERE IsDeleted=0");
 }

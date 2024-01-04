@@ -8,10 +8,7 @@ namespace InventoryControll.Domain.NoEntityModels
 {
     public class BalanceItem
     {
-        public int Id { get; set; }
-        public Guid Uuid { get; set; }
-        public string GoodName { get; set; }
-        public decimal Price { get; set; }
-        public decimal Count { get; set; }
+        public Good Good { get; set; }
+        public decimal Balance { get; set; }
     }
 }

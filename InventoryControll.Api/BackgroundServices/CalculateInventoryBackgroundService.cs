@@ -50,7 +50,7 @@ public class CalculateInventoryBackgroundService : IHostedService
                         StocktakingId = stocktakingId,
                         GoodId=x.Key,
                         CountFact = x.Sum(s=>s.CountFact),
-                        CountDb=balance.Where(b=>b.Id==x.Key).FirstOrDefault()?.Count ?? 0,
+                        CountDb=balance.Where(b=>b.Good.Id==x.Key).FirstOrDefault()?.Balance ?? 0,
                         Price = x.First().Price
                     });
                 foreach(var pos in positions) 
