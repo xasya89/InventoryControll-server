@@ -64,13 +64,13 @@ namespace InventoryControll.BizLogic.BizLogic
         private async Task deleteDoubleShiftPositions(DateTime? start)
         {
             IEnumerable<DoubleCheckSellItem> ids = await _connection.QueryAsync<DoubleCheckSellItem>(@"SELECT id, COUNT(*) c FROM checksells WHERE DateCreate>=@Start 
-                GROUP BY DateCreate HAVING c>0", new { Start = start });
+                GROUP BY DateCreate HAVING c>1", new { Start = start });
             while (ids.Any())
             {
-                await _connection.ExecuteAsync("DELETE FROM checksells WHERE id IN @Ids", new { Ids = ids });
+                await _connection.ExecuteAsync("DELETE FROM checksells WHERE id IN @Ids", new { Ids = ids.Select(x=>x.Id) });
 
                 ids = await _connection.QueryAsync<DoubleCheckSellItem>(@"SELECT id, COUNT(*) c FROM checksells WHERE DateCreate>=@Start 
-                GROUP BY DateCreate HAVING c>0", new { Start = start });
+                GROUP BY DateCreate HAVING c>1", new { Start = start });
             };
         }
 
