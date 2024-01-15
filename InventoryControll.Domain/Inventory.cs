@@ -13,8 +13,8 @@ namespace InventoryControll.Domain
         public Guid Uuid { get; set; }
         public DateTime Create { get; set; }
         public DateTime Start { get; set; }
-        public double CountDb { get; set; }
-        public double CountFact { get; set; }
+        public decimal CountDb { get; set; }
+        public decimal CountFact { get; set; }
         public decimal SumDb { get; set; }
         public decimal SumFact { get; set; }
         public decimal CashMoneyFact { get; set; }

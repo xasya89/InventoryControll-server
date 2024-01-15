@@ -87,7 +87,7 @@ namespace InventoryControll.DataDb.Repositories
 
         public async Task<int> Add(StocktakingSummary summary)
         {
-            int id = await _connection.QueryFirstAsync<int>(@"INSERT INTO stocktakingsummarygoods (StocktakingId, GoodId, CountDb, CountFact. Price) VALUES 
+            int id = await _connection.QueryFirstAsync<int>(@"INSERT INTO stocktakingsummarygoods (StocktakingId, GoodId, CountDb, CountFact, Price) 
                 VALUES (@StocktakingId, @GoodId, @CountDb, @CountFact, @Price);
                 SELECT LAST_INSERT_ID();",
                 new { StocktakingId=summary.StocktakingId, GoodId=summary.GoodId, CountDb=summary.CountDb, CountFact=summary.CountFact, Price=summary.Price });
@@ -96,8 +96,14 @@ namespace InventoryControll.DataDb.Repositories
         }
 
         public async Task Update(Stocktaking stocktaking) =>
-            await _connection.ExecuteAsync("UPDATE stocktakings s SET s.Num=@Num, s.Create=@Create WHERE s.id=@Id",
-                new { Id = stocktaking.Id, Num = stocktaking.Num, Create = stocktaking.Create });
+            await _connection.ExecuteAsync("UPDATE stocktakings s SET s.Num=@Num, s.Create=@Create, s.SumDb=@SumDb, s.SumFact=@SumFact, s.CountDb=@CountDb, s.CountFact=@CountFact WHERE s.id=@Id",
+                new { Id = stocktaking.Id, Num = stocktaking.Num, Create = stocktaking.Create, SumDb=stocktaking.SumDb, SumFact=stocktaking.SumFact, CountDb=stocktaking.CountDb, CountFact=stocktaking.CountFact });
+
+        public async Task Complite(int stocktakingId) =>
+            await _connection.ExecuteAsync("UPDATE stocktakings s SET s.isSuccess=1, s.Status=2 WHERE s.id="+ stocktakingId);
+
+        public async Task DeleteSummary(int stocktakingId) =>
+            await _connection.ExecuteAsync("DELETE FROM stocktakingsummarygoods WHERE StocktakingId=" + stocktakingId);
     }
 }
 

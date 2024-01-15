@@ -16,6 +16,8 @@ public class ChangeTenantFilter : IEndpointFilter
         var shopNameHeader = header.FirstOrDefault();
         var service =  context.HttpContext.RequestServices.GetService<ITenantService>();
         service.SetTenant(shopNameHeader ?? "MySQL");
+        var shopUnitOfWork = context.HttpContext.RequestServices.GetService<ShopUnitOfWork>();
+        shopUnitOfWork.SetConnectionString(shopNameHeader);
         return next(context);
     }
 

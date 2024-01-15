@@ -30,38 +30,18 @@ public class CalculateInventoryBackgroundService : IHostedService
         while (true)
         {
             (int stocktakingId, string shopDbName) = await NewInventoryChannel.Reader.ReadAsync();
-            using var scope = _serviceProvider.CreateScope();
-            
-            var tenant = scope.ServiceProvider.GetRequiredService<ITenantService>();
-            tenant.SetTenant(shopDbName);
-            var unitOfWork = scope.ServiceProvider.GetRequiredService<ShopUnitOfWork>();
-            var calculateBalance = scope.ServiceProvider.GetRequiredService<ICalculateBalance>();
-            var transaction = unitOfWork.Connection.BeginTransaction();
             try
             {
+                using var scope = _serviceProvider.CreateScope();
 
-                var stocktaking = await unitOfWork.Stocktakings.GetByGroup(stocktakingId);
-                var balance = await calculateBalance.Calculate(stocktaking.Create);
-                stocktaking.Create = DateOnly.FromDateTime(stocktaking.Start).ToDateTime(TimeOnly.MinValue);
-                await unitOfWork.Stocktakings.Update(stocktaking);
-                var positions = stocktaking.Groups.SelectMany(x => x.Goods).GroupBy(x=>x.GoodId)
-                    .Select(x => new StocktakingSummary
-                    {
-                        StocktakingId = stocktakingId,
-                        GoodId=x.Key,
-                        CountFact = x.Sum(s=>s.CountFact),
-                        CountDb=balance.Where(b=>b.Good.Id==x.Key).FirstOrDefault()?.Balance ?? 0,
-                        Price = x.First().Price
-                    });
-                foreach(var pos in positions) 
-                    await unitOfWork.Stocktakings.Add(pos);
-
-                transaction.Commit();
+                var tenant = scope.ServiceProvider.GetRequiredService<ITenantService>();
+                tenant.SetTenant(shopDbName);
+                var calculateBalance = scope.ServiceProvider.GetRequiredService<ICalculateBalance>();
+                await calculateBalance.Calculate(stocktakingId);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                transaction.Rollback();
-                _logger.LogError("Calculate background stocktaking\n" + ex.Message);
+                _logger.LogError("background stocktaking calc complite \n" + ex.Message);
             }
         }
     }

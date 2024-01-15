@@ -17,10 +17,14 @@ namespace InventoryControll.DataDb
         public GoodsRepository Goods { get => new GoodsRepository(Connection); }
         public StocktakingRepository Stocktakings { get => new StocktakingRepository(Connection); }
 
-        private readonly MySqlConnection _connection;
+        private MySqlConnection? _connection = null;
+        private readonly IConfiguration _configuration;
         private MySqlTransaction _transaction;
+        private string _connectionString;
         public MySqlConnection Connection { get
             {
+                if (_connection == null)
+                    _connection = new MySqlConnection(_connectionString);
                 if (_connection.State != System.Data.ConnectionState.Open)
                     _connection.Open();
                 return _connection;
@@ -30,7 +34,14 @@ namespace InventoryControll.DataDb
         {
             var name = tenant.Tenant;
             string conStr = configuration.GetConnectionString(name);
-            _connection = new MySqlConnection(conStr);
+            if(conStr!=null)
+                _connection = new MySqlConnection(conStr);
+            _configuration = configuration;
+        }
+
+        public void SetConnectionString(string shopDbName)
+        {
+            _connectionString = _configuration.GetConnectionString(shopDbName);
         }
 
         public async Task StartTransaction()
@@ -51,8 +62,8 @@ namespace InventoryControll.DataDb
 
         public void Dispose()
         {
-            if (_connection.State == System.Data.ConnectionState.Open)
-                _connection.Close();
+            if (_connection?.State == System.Data.ConnectionState.Open)
+                _connection?.Close();
         }
     }
 }
