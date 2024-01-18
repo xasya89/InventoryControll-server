@@ -14,6 +14,7 @@ namespace InventoryControll.DataDb
 {
     public class ShopUnitOfWork: IDisposable
     {
+        public GoodGroupsRepository GoodGroups { get => new GoodGroupsRepository(Connection); }
         public GoodsRepository Goods { get => new GoodsRepository(Connection); }
         public StocktakingRepository Stocktakings { get => new StocktakingRepository(Connection); }
 

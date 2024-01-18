@@ -10,6 +10,7 @@ public class Good
 {
     public int Id { get; set; }
     public Guid Uuid { get; set; }
+    public int GoodGroupId { get; set; }
     public string Name { get; set; }
     public SpecialTypes SpecialType { get; set; }
     public UnitType Unit { get; set; }
